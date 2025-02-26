@@ -1,4 +1,36 @@
+from django.contrib.auth.models import AbstractUser
 from django.db import models
+from phonenumber_field.modelfields import PhoneNumberField
+
+
+class User(AbstractUser):
+    phone = PhoneNumberField(
+        unique=True,
+        verbose_name="Номер телефона",
+        region='RU'
+    )
+    USERNAME_FIELD = 'phone'
+    REQUIRED_FIELDS = ['username']
+
+    def __str__(self):
+        return str(self.phone)
+
+    class Meta:
+        verbose_name = 'Пользователь'
+        verbose_name_plural = 'Пользователи'
+
+
+class Profile(models.Model):
+    name = models.CharField('Имя', max_length=100, blank=True)
+    email = models.EmailField('Email', max_length=100, unique=True, blank=True)
+    phone_number = models.OneToOneField(User, on_delete=models.CASCADE)
+
+    def __str__(self):
+        return self.name
+
+    class Meta:
+        verbose_name = 'Личный кабинет'
+        verbose_name_plural = 'Личные кабинеты'
 
 
 class Bitlink(models.Model):

@@ -1,5 +1,13 @@
 from django.contrib import admin
-from .models import Bitlink, Sizes, Forms, Toppings, Berries, Decors
+from .models import Bitlink, Sizes, Forms, Toppings, Berries, Decors, User, Profile
+
+@admin.register(User)
+class UserAdmin(admin.ModelAdmin):
+    list_display = ('phone',)
+
+@admin.register(Profile)
+class ProfileAdmin(admin.ModelAdmin):
+    list_display = ('pk','name', 'email', 'phone_number')
 
 
 @admin.register(Bitlink)

@@ -24,6 +24,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'cake_models',
+    'phonenumber_field'
 ]
 
 MIDDLEWARE = [
@@ -94,3 +95,4 @@ STATICFILES_DIRS = [
 ]
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+AUTH_USER_MODEL = 'cake_models.User'
