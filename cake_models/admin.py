@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Bitlink, Sizes, Forms, Toppings, Berries, Decors, User, Profile
+from .models import Bitlink, Sizes, Forms, Toppings, Berries, Decors, User, Profile, Order
 
 @admin.register(User)
 class UserAdmin(admin.ModelAdmin):
@@ -38,3 +38,8 @@ class BerriesAdmin(admin.ModelAdmin):
 @admin.register(Decors)
 class DecorsAdmin(admin.ModelAdmin):
     list_display = ('title', 'price',)
+
+
+@admin.register(Order)
+class DecorsAdmin(admin.ModelAdmin):
+    list_display = ('id', 'client_name',)

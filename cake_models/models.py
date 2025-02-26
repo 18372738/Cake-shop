@@ -1,13 +1,21 @@
 from django.contrib.auth.models import AbstractUser
 from django.db import models
+from django.utils import timezone
 from phonenumber_field.modelfields import PhoneNumberField
+
+
+ORDER_STATUSES = (
+    ('ADOPTED', 'Принят'),
+    ("courier", "передан курьеру"),
+    ("delivered", "доставлено")
+)
 
 
 class User(AbstractUser):
     phone = PhoneNumberField(
         unique=True,
         verbose_name="Номер телефона",
-        region='RU'
+        region='RU',
     )
     USERNAME_FIELD = 'phone'
     REQUIRED_FIELDS = ['username']
@@ -22,7 +30,7 @@ class User(AbstractUser):
 
 class Profile(models.Model):
     name = models.CharField('Имя', max_length=100, blank=True)
-    email = models.EmailField('Email', max_length=100, unique=True, blank=True)
+    email = models.EmailField('Email', max_length=100, blank=True)
     phone_number = models.OneToOneField(User, on_delete=models.CASCADE)
 
     def __str__(self):
@@ -139,3 +147,119 @@ class Decors(models.Model):
 
     def __str__(self):
         return self.title
+
+
+class Order(models.Model):
+    status = models.CharField(
+        verbose_name="Статус",
+        choices=ORDER_STATUSES,
+        max_length=30,
+        default="true",
+    )
+
+    size = models.ForeignKey(
+        Sizes,
+        on_delete=models.CASCADE,
+        related_name='orders',
+        verbose_name='Количество уровней торта',
+        null=True,
+        blank=True,
+    )
+
+    form = models.ForeignKey(
+        Forms,
+        on_delete=models.CASCADE,
+        related_name='orders',
+        verbose_name='Форма торта',
+        null=True,
+        blank=True,
+    )
+
+    topping = models.ForeignKey(
+        Toppings,
+        on_delete=models.CASCADE,
+        related_name='orders',
+        verbose_name='Топпинг',
+        null=True,
+        blank=True,
+    )
+
+    berry = models.ForeignKey(
+        Berries,
+        on_delete=models.CASCADE,
+        related_name='orders',
+        verbose_name='Ягоды',
+        null=True,
+        blank=True,
+    )
+
+    decor = models.ForeignKey(
+        Decors,
+        on_delete=models.CASCADE,
+        related_name='orders',
+        verbose_name='Декор',
+        null=True,
+        blank=True,
+    )
+
+    inscription = models.TextField(
+        'надпись на торт',
+        blank=True,
+    )
+
+    comment = models.TextField(
+        'комментарий к заказу',
+        blank=True
+    )
+
+    client_name = models.CharField(
+        'имя клиента',
+        max_length=100
+    )
+
+    phonenumber = PhoneNumberField(
+        verbose_name='номер телефона',
+        region='RU',
+        unique=True
+    )
+
+    email = models.EmailField(
+        verbose_name='почта клиента'
+    )
+
+    address = models.CharField(
+        'адрес доставки',
+        max_length=250,
+        blank=True
+    )
+
+    delivery_datetime = models.DateTimeField(
+        'дата и время доставки',
+        db_index=True,
+        null=True,
+        blank=True,
+    )
+
+    delivery_comment = models.TextField(
+        'комментарий курьеру',
+        blank=True
+    )
+
+    created_at = models.DateTimeField(
+        'заказ зарегестрирован',
+        default=timezone.now,
+        db_index=True
+    )
+
+    total_cost = models.IntegerField(
+        'Стоимость заказа',
+        null=True,
+        blank=True
+    )
+
+    class Meta():
+        verbose_name = 'заказ'
+        verbose_name_plural = 'заказы'
+
+    def __str__(self):
+        return f'Заказ № {self.id}. {self.client_name}, телефон - {self.phonenumber}'
