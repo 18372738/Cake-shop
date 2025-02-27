@@ -13,8 +13,6 @@ def index(request: HttpRequest) -> HttpResponse:
     }
     return render(request, "index.html", context)
 
-
-
 class RegistrationUserView(CreateView):
     model = User
     form_class = RegistrationUserForm

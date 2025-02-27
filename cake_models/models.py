@@ -263,3 +263,4 @@ class Order(models.Model):
 
     def __str__(self):
         return f'Заказ № {self.id}. {self.client_name}, телефон - {self.phonenumber}'
+
