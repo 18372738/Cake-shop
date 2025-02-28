@@ -4,12 +4,24 @@ from django.urls import reverse_lazy, reverse
 from django.views.generic import CreateView, ListView
 
 from .forms import RegistrationUserForm
-from .models import User, Profile
+from .models import User, Profile, Sizes, Forms, Toppings, Berries, Decors
 
+
+def get_cake_elements():
+    elements = {
+        'sizes': Sizes.objects.all(),
+        'forms': Forms.objects.all(),
+        'toppings': Toppings.objects.all(),
+        'berries': Berries.objects.all(),
+        'decors': Decors.objects.all(),
+    }
+    return elements
 
 def index(request: HttpRequest) -> HttpResponse:
+
     context = {
-        'form': RegistrationUserForm()
+        'form': RegistrationUserForm(),
+        'elements': get_cake_elements(),
     }
     return render(request, "index.html", context)
 
