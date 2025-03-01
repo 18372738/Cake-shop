@@ -10,11 +10,11 @@ env.read_env()
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-SECRET_KEY = 'django-insecure-oqs-%37yn!f$1$5py^w&1_r7+_2dvyqm@#+7rz0x)4e0u7h%mt'
+SECRET_KEY = env.str('SECRET_KEY')
 
-DEBUG = True
+DEBUG = env.bool('DEBUG', False)
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = env.list('ALLOWED_HOSTS', [])
 
 INSTALLED_APPS = [
     'django.contrib.admin',
