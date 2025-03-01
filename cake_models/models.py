@@ -1,6 +1,7 @@
 from django.contrib.auth.models import AbstractUser
 from django.db import models
 from django.utils import timezone
+from django.utils.text import slugify
 from phonenumber_field.modelfields import PhoneNumberField
 
 
@@ -27,14 +28,19 @@ class User(AbstractUser):
         verbose_name = 'Пользователь'
         verbose_name_plural = 'Пользователи'
 
+    def save(self, *args, **kwargs):
+        if not self.username:
+            self.username = slugify(self.phone)
+        super().save(*args, **kwargs)
+
 
 class Profile(models.Model):
     name = models.CharField('Имя', max_length=100, blank=True)
     email = models.EmailField('Email', max_length=100, blank=True)
-    phone_number = models.OneToOneField(User, on_delete=models.CASCADE)
+    user = models.OneToOneField(User, on_delete=models.CASCADE, related_name='profile')
 
     def __str__(self):
-        return self.name
+        return str(self.user)
 
     class Meta:
         verbose_name = 'Личный кабинет'

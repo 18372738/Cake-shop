@@ -13,7 +13,7 @@ class UserAdmin(admin.ModelAdmin):
 
 @admin.register(Profile)
 class ProfileAdmin(admin.ModelAdmin):
-    list_display = ('pk','name', 'email', 'phone_number')
+    list_display = ('pk','name', 'email', 'user')
 
 
 @admin.register(Bitlink)
