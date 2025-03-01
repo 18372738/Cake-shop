@@ -37,11 +37,14 @@ class RegistrationUserView(CreateView):
     def form_valid(self, form):
         user = form.save()
         print(f"Создан пользователь: {user}, ID: {user.id}, Phone: {user.phone}, Username: {user.username}", )
-        login(self.request, user)
-        self.request.session.save()
 
-        print(f"Авторизованный пользователь: {self.request.user.is_authenticated}")
         return super().form_valid(form)
+
+    def get_success_url(self):
+        user = self.object
+        login(self.request, user)
+        print(f"Авторизованный пользователь: {self.request.user.is_authenticated}")
+        return super().get_success_url()
 
 class ProfileListView(DetailView):
     model = Profile
