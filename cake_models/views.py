@@ -8,7 +8,7 @@ from django.urls import reverse_lazy, reverse
 from django.views import View
 from django.views.generic import CreateView, ListView, DetailView
 
-from .forms import RegistrationUserForm, LoginUserForm
+from .forms import RegistrationUserForm, LoginUserForm, ProfileUserForm
 from .models import User, Profile, Sizes, Forms, Toppings, Berries, Decors, Order
 
 
@@ -89,9 +89,20 @@ class ProfileListView(DetailView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
+        profile = self.get_object()
         orders = Order.objects.filter(user=self.request.user)
         context['orders'] = orders
+        context['phone'] = self.request.user.phone
+        context['form'] = ProfileUserForm(instance=profile)
         return context
+
+    def post(self,request, *args, **kwargs):
+        profile = self.get_object()
+        form = ProfileUserForm(request.POST, instance=profile)
+        if form.is_valid():
+            form.save()
+            return redirect('profile')
+        return self.render_to_response(self.get_context_data(form=form))
 
 
 class UserLogoutView(View):

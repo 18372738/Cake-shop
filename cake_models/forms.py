@@ -60,3 +60,17 @@ class LoginUserForm(AuthenticationForm):
     class Meta:
         model = User
         fields = ('phone', 'password')
+
+
+class ProfileUserForm(forms.ModelForm):
+    name = forms.TextInput(attrs={
+        'v-model': 'Name',
+        'class': 'form-control my-2 cake__textinput'
+    })
+    email = forms.EmailInput(attrs={
+        'v-model': 'Email',
+        'class': 'form-control my-2 cake__textinput'
+    })
+    class Meta:
+        model = Profile
+        fields = ('name', 'email')
