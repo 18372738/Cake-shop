@@ -1,10 +1,17 @@
+import datetime
 from django.contrib.auth import logout, login, get_user
+from django.contrib.auth.forms import AuthenticationForm
 from django.contrib.auth.mixins import LoginRequiredMixin
+from django.contrib.auth.views import LoginView
 from django.shortcuts import render, redirect, get_object_or_404
 from django.http import HttpRequest, HttpResponse, HttpResponseRedirect, Http404, JsonResponse
 from django.urls import reverse_lazy, reverse
 from django.views import View
 from django.views.generic import CreateView, ListView, DetailView
+from django.utils.text import slugify
+
+from .forms import RegistrationUserForm, LoginUserForm, ProfileUserForm
+from .models import User, Profile, Sizes, Forms, Toppings, Berries, Decors, Order
 
 import uuid
 from yookassa import Configuration, Payment
@@ -81,14 +88,76 @@ def get_cake_element():
     return cake_elements, cake_elements_json
 
 
-def index(request):
-    cake_elements, cake_elements_json = get_cake_element()
+def create_order(request, id=None):
+    email = request.GET.get('EMAIL')
+    address = request.GET.get('ADDRESS')
+    date = request.GET.get('DATE')
+    time = request.GET.get('TIME')
+    comment = request.GET.get('DELIVCOMMENTS')
+    customer_name = request.GET.get('NAME')
+    cake_name = request.GET.get('COMMENTS')
+    phone = request.GET.get('PHONE')
+    inscription=request.GET.get('WORDS')
+    levels = request.GET.get('LEVELS')
+    form = request.GET.get('FORM')
+    topping = request.GET.get('TOPPING')
+    berries = request.GET.get('BERRIES')
+    decor = request.GET.get('DECOR')
+    cake_id = request.GET.get('CAKE')
+    total_cost = 0
+    cake_berries_obj = None
+    cake_decor_obj = None
+    if berries:
+        cake_berries = Berries.objects.get(id=berries)
+        total_cost += cake_berries.price
+    if decor:
+        cake_decor = Decors.objects.get(id=decor)
+        total_cost += cake_decor.price
+    if inscription:
+        total_cost = total_cost + 500
 
+    cake_form = Forms.objects.get(id=form)
+    cake_levels = Sizes.objects.get(id=levels)
+    cake_topping = Toppings.objects.get(id=topping)
+    total_cost += int(cake_form.price + cake_levels.price + cake_topping.price)
+    if date:
+        order_date = datetime.datetime.strptime(date, '%Y-%m-%d')
+        min_date = datetime.datetime.now() + datetime.timedelta(days=1)
+        if order_date < min_date:
+            total_cost = int(total_cost) * 1.2
+    user, created = User.objects.get_or_create(
+        phone=phone,
+        defaults={"username": slugify(phone)}
+    )
+    order = Order.objects.create(
+        user=user,
+        client_name=customer_name,
+        email=email,
+        comment=cake_name,
+        address=address,
+        delivery_datetime=f'{date} {time}',
+        delivery_comment=f'{comment}',
+        size=cake_levels,
+        form=cake_form,
+        topping=cake_topping,
+        berry=cake_berries,
+        decor=cake_decor,
+        inscription=inscription,
+        total_cost=total_cost
+    )
+
+
+def index(request):
+    phone = request.GET.get('PHONE')
+    if phone:
+        create_order(request)
+    cake_elements, cake_elements_json = get_cake_element()
     return render(
         request,
         template_name='index.html',
         context={
             'form': RegistrationUserForm(),
+            'form_login': LoginUserForm(),
             'cake_elements': cake_elements,
             'cake_elements_json': cake_elements_json,
         }
@@ -113,6 +182,12 @@ class RegistrationUserView(CreateView):
         print(f"Авторизованный пользователь: {self.request.user.is_authenticated}")
         return super().get_success_url()
 
+class LoginUserView(LoginView):
+    form_class = AuthenticationForm
+    template_name = 'index.html'
+
+    def get_success_url(self):
+        return reverse_lazy('profile')
 
 class ProfileListView(DetailView):
     model = Profile
@@ -124,6 +199,23 @@ class ProfileListView(DetailView):
         if not self.request.user.is_authenticated:
             raise Http404("Пользователь не авторизован.")
         return get_object_or_404(Profile, user=self.request.user)
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        profile = self.get_object()
+        orders = Order.objects.filter(user=self.request.user)
+        context['orders'] = orders
+        context['phone'] = self.request.user.phone
+        context['form'] = ProfileUserForm(instance=profile)
+        return context
+
+    def post(self,request, *args, **kwargs):
+        profile = self.get_object()
+        form = ProfileUserForm(request.POST, instance=profile)
+        if form.is_valid():
+            form.save()
+            return redirect('profile')
+        return self.render_to_response(self.get_context_data(form=form))
 
 
 class UserLogoutView(View):
