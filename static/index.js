@@ -99,18 +99,18 @@ Vue.createApp({
                 }
             },
             DATA: {
-                Levels: ['не выбрано', '1', '2', '3'],
-                Forms: ['не выбрано', 'Круг', 'Квадрат', 'Прямоугольник'],
-                Toppings: ['не выбрано', 'Без', 'Белый соус', 'Карамельный', 'Кленовый', 'Черничный', 'Молочный шоколад', 'Клубничный'],
-                Berries: ['нет', 'Ежевика', 'Малина', 'Голубика', 'Клубника'],
-                Decors: [ 'нет', 'Фисташки', 'Безе', 'Фундук', 'Пекан', 'Маршмеллоу', 'Марципан']
+                Levels: cake_elements.size_titles,
+                Forms: cake_elements.form_titles,
+                Toppings: cake_elements.topping_titles,
+                Berries: cake_elements.berry_titles,
+                Decors: cake_elements.decor_titles,
             },
             Costs: {
-                Levels: [0, 400, 750, 1100],
-                Forms: [0, 600, 400, 1000],
-                Toppings: [0, 0, 200, 180, 200, 300, 350, 200],
-                Berries: [0, 400, 300, 450, 500],
-                Decors: [0, 300, 400, 350, 300, 200, 280],
+                Levels: cake_elements.size_prices,
+                Forms: cake_elements.form_prices,
+                Toppings: cake_elements.topping_prices,
+                Berries: cake_elements.berry_prices,
+                Decors: cake_elements.decor_prices,
                 Words: 500
             },
             Levels: 0,
@@ -139,8 +139,8 @@ Vue.createApp({
     },
     computed: {
         Cost() {
-            let W = this.Words ? this.Costs.Words : 0
-            return this.Costs.Levels[this.Levels] + this.Costs.Forms[this.Form] +
+          let W = this.Words ? (this.Costs.Words || 0) : 0;
+          return this.Costs.Levels[this.Levels] + this.Costs.Forms[this.Form] +
                 this.Costs.Toppings[this.Topping] + this.Costs.Berries[this.Berries] +
                 this.Costs.Decors[this.Decor] + W
         }

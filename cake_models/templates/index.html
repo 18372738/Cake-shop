@@ -1,77 +1,16 @@
-
+{% extends "base.html" %}
 {% load static %}
 {% block content %}
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet"
-          integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
-    <link rel="stylesheet" href="{% static 'Style.css' %}">
-    <!-- Для разработки: -->
-    <script src="https://unpkg.com/vue@3"></script>
-    <!-- Для продакшина: -->
-    <!-- <script src="https://unpkg.com/vue@3/dist/vue.global.prod.js"></script> -->
-    <script src="https://unpkg.com/vee-validate"></script>
-    <title>Тортики</title>
-</head>
-<body>
-<header class="navbar navbar-expand-xl navbar-light fixed-top bg-white py-4">
-    <nav class="container">
-        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar"
-                aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
-            <span class="navbar-toggler-icon"></span>
-        </button>
-        <a class="navbar-brand" href="#">
-            <img src="{% static 'img/Logo.svg' %}" alt="CakeBake">
-        </a>
-        <div class="collapse navbar-collapse justify-content-end" id="navbar">
-            <ul class="navbar-nav">
-                <li class="nav-item me-5">
-                    <a class="nav-link fw-lighter cake_blue" href="#step3">Создать торт</a>
-                </li>
-                <li class="nav-item me-5">
-                    <a class="nav-link fw-lighter cake_blue" href="#step2">Каталог</a>
-                </li>
-                <li class="nav-item me-5">
-                    <a class="nav-link fw-lighter cake_blue" href="#step4">Оплата и доставка</a>
-                </li>
-                <li class="nav-item me-5">
-                    <a class="nav-link fw-lighter cake_blue" href="#Contacts">Контакты</a>
-                </li>
-                <li class="nav-item d-block d-xl-flex flex-column align-items-end me-5">
-                    <small class="fw-lighter text-decoration-none fs_12 cake_blue">8 (495) 000-00-00</small>
-                    <small class="fw-lighter text-decoration-none fs_12 cake_blue">Пн - Вс 10:00—20:00</small>
-                </li>
-                <li class="nav-item d-flex align-items-center">
-                    <a class="nav-link fw-lighter me-1 cake_blue position-relative" href="#">
-                        <img src="{% static 'img/shopping-cart.svg' %}" alt="">
-                        <!--метка на иконке, убрать класс d-none чтоб появилась-->
-                        <span class="position-absolute translate-middle badge rounded-pill cake__bg_pink fs_8 d-none">1</span>
-                    </a>
-                    {% if user.is_authenticated %}
-                        <a class="nav-link fw-lighter cake_grey fs_12" href="{% url 'profile' %}">
-                        {{ user.username }}
-                    </a>
-                    {% else %}
-                        <a class="nav-link fw-lighter me-1 cake_blue position-relative" href="#RegModal"
-                           data-bs-toggle="modal">
-                            <img src="{% static 'img/user.svg' %}" alt="">
-
-                            <span class="position-absolute translate-middle badge rounded-pill cake__bg_pink fs_8 d-none">1</span>
-                        </a>
-                    {% endif %}
-                    <a class="nav-link fw-lighter cake_grey fs_12 d-none" href="#">
-                        Ирина
-                    </a>
-                </li>
-            </ul>
-        </div>
-    </nav>
-
-</header>
-<main>
+<script>
+  var cake_elements = {{ cake_elements_json|safe }};
+  console.log("Levels:", this.Levels);
+  console.log("Forms:", this.Form);
+  console.log("Toppings:", this.Topping);
+  console.log("Berries:", this.Berries);
+  console.log("Decors:", this.Decor);
+  console.log(this.Levels, this.Form, this.Topping, this.Berries, this.Decor);
+</script>
+  <main>
     <div class="container mt-header">
         <aside class="modal fade" id="RegModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
                aria-labelledby="RegModalLabel" aria-hidden="true">
@@ -210,43 +149,38 @@
                     </div>
                     <div class="d-flex align-items-center flex-wrap mb-3">
                         <span class="me-3 fs_40 cake_blue">Количество уровней</span>
-                        {% for size in elements.sizes %}
-                          <v-field v-model="Levels" type="radio" name="lvls" id="num{{size.id}}" value="{{size.title}}"
-                                 class="d-none cake__input"></v-field>
+                        {% for size in cake_elements.sizes %}
+                          <v-field v-model="Levels" type="radio" name="lvls" id="num{{size.id}}" value="{{size.title}}" class="d-none cake__input"></v-field>
                           <label for="num{{size.id}}" class="mx-2 px-3 py-1 cake_grey cake__label">{{size.title}}</label>
                         {% endfor %}
                     </div>
 
                     <div class="d-flex align-items-center flex-wrap mb-3">
                         <span class="me-3 fs_40 cake_blue">Форма</span>
-                        {% for form in elements.forms %}
-                          <v-field v-model="Form" type="radio" name="form" id="form{{form.id}}" value="{{form.title}}"
-                                 class="d-none cake__input"></v-field>
+                        {% for form in cake_elements.forms %}
+                          <v-field v-model="Form" type="radio" name="form" id="form{{form.id}}" value="{{form.title}}" class="d-none cake__input"></v-field>
                           <label for="form{{form.id}}" class="mx-2 px-3 py-1 cake_grey cake__label">{{form.title}}</label>
                         {% endfor %}
                     </div>
                     <div class="d-flex align-items-center flex-wrap mb-3">
                         <span class="me-3 fs_40 cake_blue">Топпинг</span>
-                        {% for topping in elements.toppings %}
-                          <v-field v-model="Topping" type="radio" name="topping" id="topping{{topping.id}}" value="{{topping.title}}"
-                                 class="d-none cake__input"></v-field>
+                        {% for topping in cake_elements.toppings %}
+                          <v-field v-model="Topping" type="radio" name="topping" id="topping{{topping.id}}" value="{{topping.title}}" class="d-none cake__input"></v-field>
                           <label for="topping{{topping.id}}" class="mx-2 px-3 py-1 cake_grey cake__label">{{topping.title}}</label>
                         {% endfor %}
                     </div>
                     <h1 class="me-3 fs_40 cake_pink mb-3 mt-5">Дополнительно</h1>
                     <div class="d-flex align-items-center flex-wrap mb-3">
                         <span class="me-3 fs_40 cake_blue">Ягоды</span>
-                        {% for berry in elements.berries %}
-                          <v-field v-model="Berries" type="radio" name="berries" id="berries{{berry.id}}" value="{{berry.title}}"
-                                 class="d-none cake__input"></v-field>
+                        {% for berry in cake_elements.berries %}
+                          <v-field v-model="Berries" type="radio" name="berries" id="berries{{berry.id}}" value="{{berry.title}}" class="d-none cake__input"></v-field>
                           <label for="berries{{berry.id}}" class="mx-2 px-3 py-1 cake_grey cake__label">{{berry.title}}</label>
                         {% endfor %}
                     </div>
                     <div class="d-flex align-items-center flex-wrap mb-3">
                         <span class="me-3 fs_40 cake_blue">Декор</span>
-                        {% for decor in elements.decors %}
-                          <v-field v-model="Decor" type="radio" name="decor" id="decor{{decor.id}}" value="{{decor.title}}"
-                                 class="d-none cake__input"></v-field>
+                        {% for decor in cake_elements.decors %}
+                          <v-field v-model="Decor" type="radio" name="decor" id="decor{{decor.id}}" value="{{decor.title}}" class="d-none cake__input"></v-field>
                           <label for="decor{{decor.id}}" class="mx-2 px-3 py-1 cake_grey cake__label">{{decor.title}}</label>
                         {% endfor %}
                     </div>
@@ -278,24 +212,24 @@
 
             <section class="row pt-header" id="step4" v-if="Designed">
                 <form class="d-none">
-                    {% for size in elements.sizes %}
-                      <input v-model="Levels" value="{{size.id}}" type="radio" name="LEVELS">
+                    {% for size in cake_elements.sizes %}
+                      <input v-model="Levels" value="{{ size.id }}" type="radio" name="LEVELS">
                     {% endfor %}
                     <br>
-                    {% for form in elements.form %}
-                      <input v-model="Form" value="{{form.id}}" type="radio" name="FORM">
+                    {% for form in cake_elements_json.forms %}
+                      <input v-model="Form" value="{{ form.id }}" type="radio" name="FORM">
                     {% endfor %}
                     <br>
-                    {% for topping in elements.toppings %}
-                      <input v-model="Topping" value="{{topping.id}}" type="radio" name="TOPPING">
+                    {% for topping in cake_elements_json.toppings %}
+                      <input v-model="Topping" value="{{ topping.id }}" type="radio" name="TOPPING">
                     {% endfor %}
                     <br>
-                    {% for berry in elements.berries %}
-                      <input v-model="Berries" value="{{berry.id}}" type="radio" name="BERRIES">
+                    {% for berry in cake_elements_json.berries %}
+                      <input v-model="Berries" value="{{ berry.id }}" type="radio" name="BERRIES">
                     {% endfor %}
                     <br>
-                    {% for decor in elements.decors %}
-                      <input v-model="Decor" value="{{decor.id}}" type="radio" name="DECOR">
+                    {% for decor in cake_elements_json.decors %}
+                      <input v-model="Decor" value="{{ decor.id }}" type="radio" name="DECOR">
                     {% endfor %}
                     <br>
                     <input v-model="Words" type="text" name="WORDS">
@@ -405,7 +339,7 @@
                             </div>
                             <div class="col-12 col-md-6 d-flex flex-column align-items-center align-items-md-end mt-3 mt-md-0">
                                 <div class="d-flex">
-                                    <span class="cake_pink fs_40 fw-bold me-2">Итого: {{ Cost }}₽</span>
+                                    {% verbatim %}<span class="cake_pink fs_40 fw-bold me-2">Итого: {{ Cost }}₽</span>{% endverbatim %}
                                 </div>
                                 <button type="submit"
                                         class="btn btn_hover text-white rounded-pill mt-3 px-5 shadow-none cake__button cake__bg_pink">
@@ -418,48 +352,5 @@
             </section>
         </article>
     </div>
-</main>
-
-
-<footer class="mt-5 cake__bg_blue" id="Contacts">
-    <div class="container my-5 py-5">
-        <div class="row">
-            <div class="col-4 col-xl-2 d-flex flex-column">
-                <div>
-                    <img src="{% static 'img/Logo.svg' %}" alt="CakeBake" class="mb-2">
-                </div>
-                <small class="text-white fs_12">©2022 CakeBake</small>
-                <small class="text-white fs_12">Все права защищены.</small>
-                <div class="flex-grow-1 d-flex align-items-end">
-                    <small class="text-white fs_12">г. Москва, Большой Козловский пер., д. 12</small>
-                </div>
-            </div>
-            <div class="col-4 col-xl-2 d-flex flex-column">
-                <a href="#" class="text-decoration-none text-white">На свадьбу</a>
-                <a href="#" class="text-decoration-none text-white">На день рождения</a>
-                <a href="#" class="text-decoration-none text-white">На чаепитие</a>
-            </div>
-            <div class="col-4 col-xl-2 d-flex flex-column">
-                <a href="#step3" class="text-decoration-none text-white">Создать торт</a>
-                <a href="#step2" class="text-decoration-none text-white">Каталог</a>
-                <a href="#Contacts" class="text-decoration-none text-white">Контакты</a>
-            </div>
-            <div class="col-12 col-xl-6 d-flex flex-column align-items-start align-items-xl-end mt-3 mt-xl-0">
-                <a href="https://vk.com/devmanorg"><img src="{% static 'img/vk.svg' %}" alt="VK"
-                                                        class="mb-3 mb-xl-5"></a>
-                <small class="text-white fs_12">8 (495) 000-00-00</small>
-                <small class="text-white fs_12">info@cakebake.ru</small>
-                <small class="text-white fs_12">Пн - Вс 10:00—20:00</small>
-            </div>
-        </div>
-    </div>
-</footer>
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"
-        integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM"
-        crossorigin="anonymous"></script>
-
-<script src="{% static 'index.js' %}"></script>
-<script src="{% static 'registration.js' %}"></script>
-</body>
-</html>
+  </main>
 {% endblock content %}

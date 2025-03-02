@@ -10,23 +10,43 @@ from .forms import RegistrationUserForm
 from .models import User, Profile, Sizes, Forms, Toppings, Berries, Decors
 
 
-def get_cake_elements():
-    elements = {
-        'sizes': Sizes.objects.all(),
+def get_cake_element():
+    cake_elements = {
         'forms': Forms.objects.all(),
         'toppings': Toppings.objects.all(),
         'berries': Berries.objects.all(),
         'decors': Decors.objects.all(),
+        'sizes': Sizes.objects.all()
     }
-    return elements
-
-def index(request: HttpRequest) -> HttpResponse:
-
-    context = {
-        'form': RegistrationUserForm(),
-        'elements': get_cake_elements(),
+    cake_elements_json = {
+        'size_titles': {0: 'не выбрано'} | {item.id: item.title for item in cake_elements['sizes']},
+        'size_prices': {0: 0} | {item.id: int(item.price) for item in cake_elements['sizes']},
+        'form_titles': {0: 'не выбрано'} | {item.id: item.title for item in cake_elements['forms']},
+        'form_prices': {0: 0} | {item.id: int(item.price) for item in cake_elements['forms']},
+        'topping_titles': {0: 'не выбрано'} | {item.id: item.title for item in cake_elements['toppings']},
+        'topping_prices': {0: 0} | {item.id: int(item.price) for item in cake_elements['toppings']},
+        'berry_titles': {0: 'нет'} | {item.id: item.title for item in cake_elements['berries']},
+        'berry_prices': {0: 0} | {item.id: int(item.price) for item in cake_elements['berries']},
+        'decor_titles': {0: 'нет'} | {item.id: item.title for item in cake_elements['decors']},
+        'decor_prices': {0: 0} | {item.id: int(item.price) for item in cake_elements['decors']},
     }
-    return render(request, "index.html", context)
+
+    return cake_elements, cake_elements_json
+
+
+def index(request):
+    cake_elements, cake_elements_json = get_cake_element()
+
+    return render(
+        request,
+        template_name='index.html',
+        context={
+            'form': RegistrationUserForm(),
+            'cake_elements': cake_elements,
+            'cake_elements_json': cake_elements_json,
+        }
+    )
+
 
 class RegistrationUserView(CreateView):
     model = User
@@ -45,6 +65,7 @@ class RegistrationUserView(CreateView):
         login(self.request, user)
         print(f"Авторизованный пользователь: {self.request.user.is_authenticated}")
         return super().get_success_url()
+
 
 class ProfileListView(DetailView):
     model = Profile
