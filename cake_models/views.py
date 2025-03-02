@@ -1,13 +1,15 @@
 from django.contrib.auth import logout, login, get_user
+from django.contrib.auth.forms import AuthenticationForm
 from django.contrib.auth.mixins import LoginRequiredMixin
+from django.contrib.auth.views import LoginView
 from django.shortcuts import render, redirect, get_object_or_404
 from django.http import HttpRequest, HttpResponse, HttpResponseRedirect, Http404
 from django.urls import reverse_lazy, reverse
 from django.views import View
 from django.views.generic import CreateView, ListView, DetailView
 
-from .forms import RegistrationUserForm
-from .models import User, Profile, Sizes, Forms, Toppings, Berries, Decors
+from .forms import RegistrationUserForm, LoginUserForm
+from .models import User, Profile, Sizes, Forms, Toppings, Berries, Decors, Order
 
 
 def get_cake_element():
@@ -42,6 +44,7 @@ def index(request):
         template_name='index.html',
         context={
             'form': RegistrationUserForm(),
+            'form_login': LoginUserForm(),
             'cake_elements': cake_elements,
             'cake_elements_json': cake_elements_json,
         }
@@ -66,6 +69,12 @@ class RegistrationUserView(CreateView):
         print(f"Авторизованный пользователь: {self.request.user.is_authenticated}")
         return super().get_success_url()
 
+class LoginUserView(LoginView):
+    form_class = AuthenticationForm
+    template_name = 'index.html'
+
+    def get_success_url(self):
+        return reverse_lazy('profile')
 
 class ProfileListView(DetailView):
     model = Profile
@@ -77,6 +86,12 @@ class ProfileListView(DetailView):
         if not self.request.user.is_authenticated:
             raise Http404("Пользователь не авторизован.")
         return get_object_or_404(Profile, user=self.request.user)
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        orders = Order.objects.filter(user=self.request.user)
+        context['orders'] = orders
+        return context
 
 
 class UserLogoutView(View):

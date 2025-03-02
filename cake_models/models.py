@@ -156,6 +156,8 @@ class Decors(models.Model):
 
 
 class Order(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='orders')
+
     status = models.CharField(
         verbose_name="Статус",
         choices=ORDER_STATUSES,
@@ -223,11 +225,11 @@ class Order(models.Model):
         max_length=100
     )
 
-    phonenumber = PhoneNumberField(
-        verbose_name='номер телефона',
-        region='RU',
-        unique=True
-    )
+    # phonenumber = PhoneNumberField(
+    #     verbose_name='номер телефона',
+    #     region='RU',
+    #     unique=True
+    # )
 
     email = models.EmailField(
         verbose_name='почта клиента'
@@ -268,5 +270,5 @@ class Order(models.Model):
         verbose_name_plural = 'заказы'
 
     def __str__(self):
-        return f'Заказ № {self.id}. {self.client_name}, телефон - {self.phonenumber}'
+        return f'Заказ № {self.id}. {self.client_name}, телефон - {self.user}'
 
