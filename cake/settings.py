@@ -96,3 +96,5 @@ STATICFILES_DIRS = [
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 AUTH_USER_MODEL = 'cake_models.User'
+TG_BOT_TOKEN = env.str("TG_BOT_TOKEN")
+TG_CHAT_ID = env.str("TG_CHAT_ID")
