@@ -232,24 +232,24 @@
 
             <section class="row pt-header" id="step4" v-if="Designed">
                 <form class="d-none">
-                    {% for size in cake_elements_json.sizes %}
-                      <input v-model="Levels" value="{{ size.id }}" type="radio" name="LEVELS">
+                    {% for size in cake_elements.sizes %}
+                      <input v-model="Levels" value="{{size.id}}" type="radio" name="LEVELS">
                     {% endfor %}
                     <br>
-                    {% for form in cake_elements_json.forms %}
-                      <input v-model="Form" value="{{ form.id }}" type="radio" name="FORM">
+                    {% for form in cake_elements.forms %}
+                      <input v-model="Form" value="{{form.id}}" type="radio" name="FORM">
                     {% endfor %}
                     <br>
-                    {% for topping in cake_elements_json.toppings %}
-                      <input v-model="Topping" value="{{ topping.id }}" type="radio" name="TOPPING">
+                    {% for topping in cake_elements.toppings %}
+                      <input v-model="Topping" value="{{topping.id}}" type="radio" name="TOPPING">
                     {% endfor %}
                     <br>
-                    {% for berry in cake_elements_json.berries %}
-                      <input v-model="Berries" value="{{ berry.id }}" type="radio" name="BERRIES">
+                    {% for berry in cake_elements.berries %}
+                      <input v-model="Berries" value="{{berry.id}}" type="radio" name="BERRIES">
                     {% endfor %}
                     <br>
-                    {% for decor in cake_elements_json.decors %}
-                      <input v-model="Decor" value="{{ decor.id }}" type="radio" name="DECOR">
+                    {% for decor in cake_elements.decors %}
+                      <input v-model="Decor" value="{{decor.id}}" type="radio" name="DECOR">
                     {% endfor %}
                     <br>
                     <input v-model="Words" type="text" name="WORDS">
