@@ -4,15 +4,67 @@ from django.contrib.auth.forms import AuthenticationForm
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.views import LoginView
 from django.shortcuts import render, redirect, get_object_or_404
-from django.http import HttpRequest, HttpResponse, HttpResponseRedirect, Http404
+from django.http import HttpRequest, HttpResponse, HttpResponseRedirect, Http404, JsonResponse
 from django.urls import reverse_lazy, reverse
 from django.views import View
 from django.views.generic import CreateView, ListView, DetailView
 from django.utils.text import slugify
 
+<<<<<<< HEAD
 from .forms import RegistrationUserForm, LoginUserForm, ProfileUserForm
 from .models import User, Profile, Sizes, Forms, Toppings, Berries, Decors, Order
+=======
+import uuid
+from yookassa import Configuration, Payment
+from django.conf import settings
+from environs import Env
 
+from .forms import RegistrationUserForm
+from .models import User, Profile, Sizes, Forms, Toppings, Berries, Decors
+>>>>>>> f5c544c (Add payment)
+
+
+
+env = Env()
+env.read_env()
+
+def create_payment(request):
+
+    Configuration.account_id = env.int('YOOKASSA_SHOP_ID')
+    Configuration.secret_key = env.str('YOOKASSA_SECRET_KEY')
+    
+    payment = Payment.create({
+        "amount": {
+            "value": "100.00",  
+            "currency": "RUB"
+        },
+        "capture_mode": "AUTOMATIC",  
+        "confirmation": {
+            "type": "redirect",
+            "return_url": "https://thumbs.dreamstime.com/z/%D1%83%D1%81%D0%BF%D0%B5%D1%85-%D0%BE%D0%B4%D0%BE%D0%B1%D1%80%D0%B8%D0%BB-%D0%BF%D0%BE%D0%B4%D1%82%D0%B2%D0%B5%D1%80%D0%B6%D0%B4%D0%B5%D0%BD%D0%BD%D0%BE%D0%B5-%D1%83%D0%B2%D0%B5%D0%B4%D0%BE%D0%BC%D0%BB%D0%B5%D0%BD%D0%B8%D0%B5-%D0%BA%D0%BE%D0%BD%D1%82%D1%80%D0%BE%D0%BB%D1%8C%D0%BD%D0%BE%D0%B9-%D0%BF%D0%BE%D0%BC%D0%B5%D1%82%D0%BA%D0%B8-%D0%BE-206638829.jpg"
+        },
+        "description": "Описание платежа"
+    })
+    
+    return redirect(payment.confirmation.confirmation_url)
+
+def success(request):
+    return render(request, 'success.html')
+
+def payment_webhook(request):
+    if request.method == "POST":
+        data = request.json()
+        payment_id = data['object']['id']
+        status = data['object']['status']
+
+        if status == "succeeded":
+            # Логика добавления заказа
+            pass
+        else:
+            # Если заказ не добавлен выводим какое-то сообщение
+            pass
+
+        return JsonResponse({"status": "ok"})
 
 def get_cake_element():
     cake_elements = {
