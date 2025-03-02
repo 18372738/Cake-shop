@@ -111,7 +111,7 @@ Vue.createApp({
                 Toppings: cake_elements.topping_prices,
                 Berries: cake_elements.berry_prices,
                 Decors: cake_elements.decor_prices,
-                Words: 500
+                Words: 0
             },
             Levels: 0,
             Form: 0,
@@ -140,9 +140,28 @@ Vue.createApp({
     computed: {
         Cost() {
           let W = this.Words ? (this.Costs.Words || 0) : 0;
-          return this.Costs.Levels[this.Levels] + this.Costs.Forms[this.Form] +
-                this.Costs.Toppings[this.Topping] + this.Costs.Berries[this.Berries] +
-                this.Costs.Decors[this.Decor] + W
+          let baseCost =
+              (this.Costs.Levels[this.Levels] || 0) +
+              (this.Costs.Forms[this.Form] || 0) +
+              (this.Costs.Toppings[this.Topping] || 0) +
+              (this.Costs.Berries[this.Berries] || 0) +
+              (this.Costs.Decors[this.Decor] || 0) + W;
+
+          if (this.Words) {
+              baseCost += 500;
+          }
+
+          if (this.Dates && this.Time) {
+              let orderDateTime = new Date(`${this.Dates}T${this.Time}`);
+              let now = new Date();
+              let hoursDiff = (orderDateTime - now) / (1000 * 60 * 60);
+
+              if (hoursDiff < 24) {
+                  baseCost *= 1.2;
+              }
+          }
+
+          return Math.round(baseCost);
         }
     }
 }).mount('#VueApp')
