@@ -1,4 +1,5 @@
 # Cake shop
+Сайт для заказа тортов, с уведомлениями о новых заказах в тг, возможностью отслеживать количество переходов по рекламной ссылке на сайт в админке, с [тестовой оплатой](https://yookassa.ru/)
 ## Что понадобится?
 ### Предварительные требования
 Скачайте или склонируйте репозиторий на свой компьютер.
@@ -11,8 +12,32 @@ pip install -r requirements.txt
 ### Дополнительные требования
 ### Переменные окружения
 Создайте файл ```.env``` в вашей директории проекта, откройте его в любом текстовом редакторе. Вам понадобятся следующие переменные окружения:
+
+- `SECRET_KEY` - секретный ключ Django
+- `ALLOWED_HOSTS` - список доменных имен или IP-адресов, с которых разрешены запросы к вашему Django-приложению.
+- `DEBUG` - Дебаг-режим
+- `VK_TOKEN` - токен ВК возможно получить по [инструкции](https://dev.vk.com/ru/api/access-token/getting-started)
+- `TG_BOT_TOKEN` - Токен для телеграмм бота получаете при создании телеграмм бота на канале в телеграм @BotFather
+- `TG_CHAT_ID` -  ID телеграмм чата, где планируете получать уведомления
+- `YOOKASSA_SHOP_ID`=ID для тестовой оплаты,вся информация [тут](https://yookassa.ru/developers/payment-acceptance/testing-and-going-live/testing)
+- `YOOKASSA_SECRET_KEY`= Secret Key [аналогично](https://yookassa.ru/developers/payment-acceptance/testing-and-going-live/testing)
+
+### Запуск
+Перед запуском необходимо выполнить первую миграцию
 ```
-SECRET_KEY=секретный ключ Django
-ALLOWED_HOSTS=127.0.0.1, localhost
-DEBUG=True
+py manage.py migrate
 ```
+
+Наполнить БД тестовыми данными
+```
+py manage.py upload_test_data
+```
+
+Запуск сервера
+```
+py manage.py runserver
+```
+
+### Цель проекта
+
+Код написан в образовательных целях на онлайн-курсе для веб-разработчиков [dvmn.org](https://dvmn.org/).
