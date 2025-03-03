@@ -225,12 +225,6 @@ class Order(models.Model):
         max_length=100
     )
 
-    # phonenumber = PhoneNumberField(
-    #     verbose_name='номер телефона',
-    #     region='RU',
-    #     unique=True
-    # )
-
     email = models.EmailField(
         verbose_name='почта клиента'
     )
@@ -271,4 +265,3 @@ class Order(models.Model):
 
     def __str__(self):
         return f'Заказ № {self.id}. {self.client_name}, телефон - {self.user}'
-

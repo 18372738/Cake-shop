@@ -135,6 +135,31 @@ Vue.createApp({
         ToStep4() {
             this.Designed = true
             setTimeout(() => this.$refs.ToStep4.click(), 0);
+        },
+        redirectToPayment() {
+            let cost = this.Cost;
+            if (!cost) {
+                alert("Стоимость заказа не рассчитана!");
+                return;
+            }
+            let params = new URLSearchParams({
+                total_cost: cost,
+                phone: this.Phone || '',
+                customer_name: this.Name || '',
+                email: this.Email || '',
+                address: this.Address || '',
+                date: this.Dates || '',
+                time: this.Time || '',
+                comment: this.Comments || '',
+                deliv_comments: this.DelivComments || '',
+                inscription: this.Words || '',
+                levels: this.Levels || 0,
+                form: this.Form || 0,
+                topping: this.Topping || 0,
+                berries: this.Berries || 0,
+                decor: this.Decor || 0
+            });
+            window.location.href = `/create-payment/?${params.toString()}`;
         }
     },
     computed: {

@@ -98,3 +98,5 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 AUTH_USER_MODEL = 'cake_models.User'
 TG_BOT_TOKEN = env.str("TG_BOT_TOKEN")
 TG_CHAT_ID = env.str("TG_CHAT_ID")
+YOOKASSA_SHOP_ID = env.int('YOOKASSA_SHOP_ID')
+YOOKASSA_SECRET_KEY = env.str('YOOKASSA_SECRET_KEY')

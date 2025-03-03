@@ -19,10 +19,9 @@ def create_profile(sender, instance, created, **kwargs):
 def notify_telegram(sender, instance, created, **kwargs):
     if created:
         message = (f"Новый заказ!\n"
-            f"Клиент: {instance.user.phone}\n"
-            f"Дата: {instance.dates}\n"
-            f"Время: {instance.time}\n"
+            f"Клиент: {instance.user.phone} - {instance.client_name}\n"
+            f"Дата и время: {instance.delivery_datetime}\n"
             f"Адрес: {instance.address}\n"
-            f"Комментарий: {instance.delivcomments or 'Нет'}"
+            f"Комментарий: {instance.delivery_comment or 'Нет'}"
         )
-        bot.send_message(chat_id=TG_CHAT_ID, text=message, reply_markup=reply_markup)
+        bot.send_message(chat_id=TG_CHAT_ID, text=message)

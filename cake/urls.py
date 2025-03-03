@@ -4,7 +4,7 @@ from django.conf import settings
 from django.conf.urls.static import static
 
 from cake_models.views import index, RegistrationUserView, ProfileListView, UserLogoutView, LoginUserView
-from cake_models.views import index, RegistrationUserView, ProfileListView, UserLogoutView, create_payment, success, payment_webhook
+from cake_models.views import index, RegistrationUserView, ProfileListView, UserLogoutView, create_payment, success
 
 
 urlpatterns = [
@@ -16,6 +16,4 @@ urlpatterns = [
     path('login/', LoginUserView.as_view(), name='login'),
     path('create-payment/', create_payment, name='create_payment'),
     path('payment/success/', success, name='payment_success'),
-    path('payment/webhook/', payment_webhook, name='payment_webhook')
-
 ]
